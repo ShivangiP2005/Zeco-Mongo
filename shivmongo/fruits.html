@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fruits & Vegetables</title>
+  <link rel="stylesheet" href="fruits.css">
+</head>
+<body>
+  <h1 style="margin-left: 35%;">Fresh Picks</h1>
+
+  <section>
+    <h2>🍎 Fruits</h2>
+    <div class="grid">
+      <div class="card" data-name="Apple" data-price="120">
+        <div class="discount">20% OFF</div>
+        <img src="aple.jpg" alt="Apple">
+        <h3>Apple</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹96</span> <del>₹120</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Banana" data-price="40">
+        <div class="discount">10% OFF</div>
+        <img src="banana.jpg" alt="Banana">
+        <h3>Banana</h3>
+        <p>1 Dozen</p>
+        <p><span class="offer">₹36</span> <del>₹40</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Orange" data-price="80">
+        <div class="discount">15% OFF</div>
+        <img src="orange.jpg" alt="Orange">
+        <h3>Orange</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹68</span> <del>₹80</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Grapes" data-price="90">
+        <div class="discount">10% OFF</div>
+        <img src="grapes.jpg" alt="Grapes">
+        <h3>Grapes</h3>
+        <p>500g</p>
+        <p><span class="offer">₹81</span> <del>₹90</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Mango" data-price="150">
+        <div class="discount">25% OFF</div>
+        <img src="mango.jpg" alt="Mango">
+        <h3>Mango</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹112</span> <del>₹150</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>🥦 Vegetables</h2>
+    <div class="grid">
+      <div class="card" data-name="Tomato" data-price="30">
+        <div class="discount">10% OFF</div>
+        <img src="tomato.jpg" alt="Tomato">
+        <h3>Tomato</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹27</span> <del>₹30</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Potato" data-price="25">
+        <div class="discount">8% OFF</div>
+        <img src="potato.jpg" alt="Potato">
+        <h3>Potato</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹23</span> <del>₹25</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Carrot" data-price="40">
+        <div class="discount">15% OFF</div>
+        <img src="carrot.jpg" alt="Carrot">
+        <h3>Carrot</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹34</span> <del>₹40</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Onion" data-price="35">
+        <div class="discount">5% OFF</div>
+        <img src="onion.jpg" alt="Onion">
+        <h3>Onion</h3>
+        <p>1kg</p>
+        <p><span class="offer">₹33</span> <del>₹35</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+
+      <div class="card" data-name="Cabbage" data-price="20">
+        <div class="discount">10% OFF</div>
+        <img src="cabbage.jpg" alt="Cabbage">
+        <h3>Cabbage</h3>
+        <p>1pc</p>
+        <p><span class="offer">₹18</span> <del>₹20</del></p>
+        <div class="qty-controls">
+          <button onclick="decrease(this)">-</button>
+          <span>0</span>
+          <button onclick="increase(this)">+</button>
+        </div>
+        <button class="add-cart" onclick="addToCart(this)">Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <aside class="cart">
+    <h2>🛒 Your Cart</h2>
+    <ul id="cart-items"></ul>
+    <p><strong>Total:</strong> ₹<span id="total-price">0</span></p>
+    <button onclick="saveCartToBackend()" class="save-cart-btn">Save Cart</button>
+
+  </aside>
+
+  <script src="fruit.js"></script>
+</body>
+</html>
