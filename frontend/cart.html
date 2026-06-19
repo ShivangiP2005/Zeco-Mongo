@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart — ZECO</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="logo">zeco</a>
+  <div class="delivery-info">
+    <div class="deliver-text">Deliver to</div>
+    <div class="location-row">
+      <span class="location-name">📍 Select Location</span>
+      <span class="arrow">▾</span>
+    </div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="nav-actions">
+    <div class="account-wrap">
+      <button class="btn-login" id="authBtn" onclick="toggleAccountMenu()">
+        👤 <span id="authLabel">Login</span>
+      </button>
+      <div class="account-dropdown" id="accountDropdown">
+        <a href="orders.html">📦 My Orders</a>
+        <a href="admin.html" id="adminLink" style="display:none">⚙️ Admin Dashboard</a>
+        <div class="divider"></div>
+        <button class="logout-item" onclick="handleAuthBtn()">🚪 Logout</button>
+      </div>
+    </div>
+    <button class="btn-cart" onclick="window.location.href='cart.html'">
+      🛒 Cart
+      <span class="cart-badge" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<div class="page-wrap">
+  <h1 class="page-title">Your Cart</h1>
+  <div id="cartContent"></div>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+let cart = JSON.parse(localStorage.getItem('zecoCart') || '[]');
+
+function saveCart() {
+  localStorage.setItem('zecoCart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.quantity, 0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function changeQty(id, delta) {
+  const item = cart.find(i => i.productId === id);
+  if (!item) return;
+  item.quantity += delta;
+  if (item.quantity <= 0) cart = cart.filter(i => i.productId !== id);
+  saveCart();
+  renderCart();
+}
+
+function removeItem(id) {
+  cart = cart.filter(i => i.productId !== id);
+  saveCart();
+  renderCart();
+}
+
+function calcTotals() {
+  const subtotal = cart.reduce((s, i) => s + i.price * i.quantity, 0);
+  const deliveryFee = subtotal >= 199 ? 0 : 25;
+  const handlingFee = subtotal > 0 ? 5 : 0;
+  const total = subtotal + deliveryFee + handlingFee;
+  return { subtotal, deliveryFee, handlingFee, total };
+}
+let savedAddresses = [];
+let selectedAddressId = null;
+let showAddForm = false;
+
+async function loadAddresses() {
+  if (!localStorage.getItem('token')) return;
+  savedAddresses = await api.getAddresses();
+  if (savedAddresses.length && !selectedAddressId) {
+    const def = savedAddresses.find(a => a.isDefault) || savedAddresses[0];
+    selectedAddressId = def._id;
+  }
+}
+
+function renderAddressSection() {
+  const box = document.getElementById('addressSection');
+  if (!box) return;
+
+  if (showAddForm || savedAddresses.length === 0) {
+    box.innerHTML = `
+      <div style="margin:12px 0;">
+        <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Label</label>
+        <input type="text" id="newLabel" placeholder="Home / Work / Other" class="address-input" style="margin:0 0 8px;"/>
+        <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Full Address</label>
+        <textarea id="newFullAddress" rows="2" placeholder="House no, street, locality" class="address-input" style="margin:0 0 8px;"></textarea>
+        <label style="font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Pincode</label>
+        <input type="text" id="newPincode" placeholder="6-digit pincode" maxlength="6" class="address-input" style="margin:0 0 8px;"/>
+        <button class="purple-btn" style="width:100%; margin-top:4px;" onclick="saveNewAddress()">Save Address</button>
+        ${savedAddresses.length > 0 ? `<button style="width:100%; margin-top:6px; background:none; border:none; color:#7b2ff7; font-size:13px; font-weight:600; cursor:pointer;" onclick="showAddForm=false; renderAddressSection();">← Use saved address</button>` : ''}
+        <div id="addressMsg"></div>
+      </div>`;
+    return;
+  }
+
+  box.innerHTML = `
+    <div style="margin:12px 0;">
+      ${savedAddresses.map(addr => `
+        <div onclick="selectedAddressId='${addr._id}'; renderAddressSection();"
+          style="border:1.5px solid ${selectedAddressId === addr._id ? '#7b2ff7' : '#e5e7eb'}; border-radius:8px; padding:10px 12px; margin-bottom:8px; cursor:pointer; background:${selectedAddressId === addr._id ? '#f3ebff' : '#fff'};">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-weight:700; font-size:13px;">${addr.label}${addr.isDefault ? ' · Default' : ''}</span>
+            <button onclick="event.stopPropagation(); removeAddress('${addr._id}')" style="background:none; border:none; color:#aaa; font-size:14px;">✕</button>
+          </div>
+          <p style="font-size:13px; color:#666; margin-top:3px;">${addr.fullAddress}, ${addr.pincode}</p>
+        </div>
+      `).join('')}
+      <button style="width:100%; padding:9px; border:1.5px dashed #7b2ff7; background:none; color:#7b2ff7; border-radius:8px; font-size:13px; font-weight:700; cursor:pointer;" onclick="showAddForm=true; renderAddressSection();">+ Add new address</button>
+    </div>`;
+}
+
+async function saveNewAddress() {
+  const label = document.getElementById('newLabel').value.trim();
+  const fullAddress = document.getElementById('newFullAddress').value.trim();
+  const pincode = document.getElementById('newPincode').value.trim();
+  const msgBox = document.getElementById('addressMsg');
+
+  if (!fullAddress) {
+    msgBox.innerHTML = '<div class="msg error">Please enter your address</div>';
+    return;
+  }
+  if (!/^\d{6}$/.test(pincode)) {
+    msgBox.innerHTML = '<div class="msg error">Pincode must be exactly 6 digits</div>';
+    return;
+  }
+
+  const res = await api.addAddress({ label, fullAddress, pincode, isDefault: savedAddresses.length === 0 });
+  if (res._id) {
+    showAddForm = false;
+    await loadAddresses();
+    selectedAddressId = res._id;
+    renderAddressSection();
+  } else {
+    msgBox.innerHTML = `<div class="msg error">${res.error || 'Failed to save'}</div>`;
+  }
+}
+
+async function removeAddress(id) {
+  await api.deleteAddress(id);
+  await loadAddresses();
+  renderAddressSection();
+}
+
+function renderCart() {
+  const wrap = document.getElementById('cartContent');
+
+  if (cart.length === 0) {
+    wrap.innerHTML = `
+      <div class="empty-cart">
+        <div style="font-size:60px">🛒</div>
+        <p>Your cart is empty</p>
+        <span>Add items to get started</span>
+        <br/>
+        <button class="purple-btn" onclick="window.location.href='index.html'">Start Shopping</button>
+      </div>`;
+    return;
+  }
+
+  const { subtotal, deliveryFee, handlingFee, total } = calcTotals();
+
+  wrap.innerHTML = `
+    <div class="cart-layout">
+      <div class="cart-items-wrap">
+        ${cart.map(item => `
+          <div class="cart-item">
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=100'"/>
+            <div class="cart-item-info">
+              <h4>${item.name}</h4>
+              <p>₹${item.price} each</p>
+            </div>
+            <div class="cart-qty">
+              <button onclick="changeQty('${item.productId}', -1)">−</button>
+              <span>${item.quantity}</span>
+              <button onclick="changeQty('${item.productId}', 1)">+</button>
+            </div>
+            <div class="cart-item-price">₹${item.price * item.quantity}</div>
+            <button onclick="removeItem('${item.productId}')" style="background:none;border:none;font-size:18px;color:#9ca3af;margin-left:8px">✕</button>
+          </div>
+        `).join('')}
+      </div>
+
+      <div class="order-summary">
+        <h3>Order Summary</h3>
+        <div class="summary-row"><span>Subtotal</span><span>₹${subtotal}</span></div>
+        <div class="summary-row"><span>Delivery Fee</span><span>${deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee}</span></div>
+        <div class="summary-row"><span>Handling Fee</span><span>₹${handlingFee}</span></div>
+        <div class="summary-row total"><span>Total</span><span>₹${total}</span></div>
+
+        <div id="addressSection"></div>
+
+        <button class="checkout-btn" onclick="placeOrder()">Place Order</button>
+        <div id="orderMsg"></div>
+      </div>
+    </div>
+  `;
+}
+
+async function placeOrder() {
+  const msgBox = document.getElementById('orderMsg');
+
+  if (!selectedAddressId) {
+    msgBox.innerHTML = '<div class="msg error">Please select or add a delivery address</div>';
+    return;
+  }
+
+  const addr = savedAddresses.find(a => a._id === selectedAddressId);
+  const address = `${addr.fullAddress}, ${addr.pincode}`;
+
+  if (!localStorage.getItem('token')) {
+    alert('Please login to place an order');
+    window.location.href = 'login.html';
+    return;
+  }
+
+  // First sync local cart to backend cart
+  try {
+    await api.clearCart();
+    for (const item of cart) {
+      await api.addToCart({
+        productId: item.productId,
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: item.quantity
+      });
+    }
+
+    const res = await api.placeOrder({ address, paymentMethod: 'Cash on Delivery' });
+
+    if (res.order) {
+      cart = [];
+      saveCart();
+      sessionStorage.setItem('justOrdered', 'true');
+      msgBox.innerHTML = '<div class="msg success">Order placed successfully! Redirecting...</div>';
+      setTimeout(() => window.location.href = 'orders.html', 1000);
+    } else {
+      msgBox.innerHTML = `<div class="msg error">${res.error || 'Failed to place order'}</div>`;
+    }
+  } catch (err) {
+    msgBox.innerHTML = '<div class="msg error">Something went wrong. Try again.</div>';
+  }
+}
+
+function handleAuthBtn() {
+  if (localStorage.getItem('token')) {
+    if (confirm('Logout from ZECO?')) {
+      localStorage.clear();
+      cart = [];
+      window.location.href = 'index.html';
+    }
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
+function toggleAccountMenu() {
+  if (!localStorage.getItem('token')) { window.location.href = 'login.html'; return; }
+  document.getElementById('accountDropdown').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.account-wrap');
+  if (wrap && !wrap.contains(e.target)) document.getElementById('accountDropdown')?.classList.remove('open');
+});
+
+// Init
+const token = localStorage.getItem('token');
+const name = localStorage.getItem('userName');
+if (token) {
+  document.getElementById('authLabel').textContent = name || 'Account';
+  if (localStorage.getItem('userRole') === 'admin') document.getElementById('adminLink').style.display = 'block';
+}
+async function init() {
+  updateCartCount();
+  await loadAddresses();
+  renderCart();
+  renderAddressSection();
+}
+init();
+
+</script>
+</body>
+</html>

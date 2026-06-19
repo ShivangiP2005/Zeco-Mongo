@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ZECO — Grocery in 10 Minutes</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- DELIVERY STRIP -->
+<div class="delivery-strip">
+  🚀 Delivering in <span>10 minutes</span> to your doorstep — Free delivery on orders above ₹199
+</div>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="logo">zeco</a>
+  <div class="delivery-info" onclick="openLocationModal()" style="cursor:pointer">
+    <div class="deliver-text">Deliver to</div>
+    <div class="location-row">
+      <span class="location-name" id="locationLabel">📍 Select Location</span>
+      <span class="arrow">▾</span>
+    </div>
+  </div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder='Search for "milk", "bread", "chips"...'/>
+  </div>
+  <div class="nav-actions">
+    <div class="account-wrap">
+      <button class="btn-login" id="authBtn" onclick="toggleAccountMenu()">
+        👤 <span id="authLabel">Login</span>
+      </button>
+      <div class="account-dropdown" id="accountDropdown">
+        <a href="orders.html">📦 My Orders</a>
+        <a href="index.html#addresses">📍 Saved Addresses</a>
+        <a href="admin.html" id="adminLink" style="display:none">⚙️ Admin Dashboard</a>
+        <div class="divider"></div>
+        <button class="logout-item" onclick="handleAuthBtn()">🚪 Logout</button>
+      </div>
+    </div>
+    <button class="btn-cart" onclick="window.location.href='cart.html'">
+      🛒 Cart
+      <span class="cart-badge" id="cartCount">0</span>
+    </button>
+  </div>
+</nav>
+
+<!-- BANNER -->
+<div class="banner-section">
+  <div class="banner-slider" id="bannerSlider">
+    <div class="banner-slide slide1 active">
+      <div class="banner-content">
+        <div class="banner-tag">⚡ Quick Commerce</div>
+        <h2>Groceries in<br/>10 Minutes</h2>
+        <p>Fresh produce, dairy & more delivered fast</p>
+        <button class="banner-btn" onclick="scrollToProducts()">Shop Now →</button>
+      </div>
+      <div class="banner-products">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&q=80" alt=""/>
+      </div>
+    </div>
+    <div class="banner-slide slide2">
+      <div class="banner-content">
+        <div class="banner-tag">🎉 Limited Offer</div>
+        <h2>Flat 50% Off<br/>on Snacks</h2>
+        <p>Chips, noodles, drinks & more</p>
+        <button class="banner-btn" onclick="scrollToProducts()">Shop Now →</button>
+      </div>
+      <div class="banner-products">
+        <img src="https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1554866585-cd94860890b7?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=200&q=80" alt=""/>
+      </div>
+    </div>
+    <div class="banner-slide slide3">
+      <div class="banner-content">
+        <div class="banner-tag">🥛 Fresh Daily</div>
+        <h2>Dairy &<br/>Breakfast Picks</h2>
+        <p>Milk, butter, bread & eggs — always fresh</p>
+        <button class="banner-btn" onclick="scrollToProducts()">Shop Now →</button>
+      </div>
+      <div class="banner-products">
+        <img src="https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=200&q=80" alt=""/>
+        <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=200&q=80" alt=""/>
+      </div>
+    </div>
+    <div class="banner-dots">
+      <div class="dot active" onclick="goSlide(0)"></div>
+      <div class="dot" onclick="goSlide(1)"></div>
+      <div class="dot" onclick="goSlide(2)"></div>
+    </div>
+  </div>
+</div>
+
+<!-- OFFERS -->
+<div class="offers-strip">
+  <div class="offer-card o1">
+    <div class="offer-icon">🎁</div>
+    <div class="offer-text">
+      <h4>First Order Free</h4>
+      <p>Use code ZECO100 for ₹100 off</p>
+    </div>
+  </div>
+  <div class="offer-card o2">
+    <div class="offer-icon">🚚</div>
+    <div class="offer-text">
+      <h4>Free Delivery</h4>
+      <p>On orders above ₹199</p>
+    </div>
+  </div>
+  <div class="offer-card o3">
+    <div class="offer-icon">⏰</div>
+    <div class="offer-text">
+      <h4>10 Min Delivery</h4>
+      <p>Fastest in your city</p>
+    </div>
+  </div>
+  <div class="offer-card o1">
+    <div class="offer-icon">💰</div>
+    <div class="offer-text">
+      <h4>Best Prices</h4>
+      <p>Lowest prices guaranteed</p>
+    </div>
+  </div>
+</div>
+
+<!-- CATEGORIES -->
+<div class="section">
+  <div class="section-header">
+    <h2>Shop by Category</h2>
+    <span class="see-all" onclick="loadAllProducts()">See all</span>
+  </div>
+  <div class="categories-scroll" id="categoriesScroll"></div>
+</div>
+
+<!-- PRODUCTS -->
+<div class="section" id="productsSection">
+  <div class="section-header">
+    <h2 id="productsTitle">All Products</h2>
+    <span class="see-all" id="clearFilter" style="display:none" onclick="loadAllProducts()">✕ Clear filter</span>
+  </div>
+  <div class="products-grid" id="productsGrid"></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">zeco</div>
+  <p>© 2025 ZECO — Grocery delivery in 10 minutes. Built with ❤️ in India.</p>
+</footer>
+
+<script src="js/api.js"></script>
+<div id="locationModalRoot"></div>
+<script>
+const CATEGORIES = [
+  { name: 'Grocery & Kitchen', img: 'https://images.unsplash.com/photo-1542838132-92c53300491e?w=200&h=200&fit=crop&q=80' },
+  { name: 'Dairy & Breakfast', img: 'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=200&h=200&fit=crop&q=80' },
+  { name: 'Snacks & Drinks',   img: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?w=200&h=200&fit=crop&q=80' },
+  { name: 'Meat & Fish',       img: 'https://images.unsplash.com/photo-1551028719-00167b16eac5?w=200&h=200&fit=crop&q=80' },
+  { name: 'Personal Care',     img: 'https://images.unsplash.com/photo-1631729371254-42c2892f0e6e?w=200&h=200&fit=crop&q=80' },
+  { name: 'Household',         img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=200&h=200&fit=crop&q=80' },
+  { name: 'Baby Care',         img: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=200&fit=crop&q=80' },
+  { name: 'Pet Care',          img: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?w=200&h=200&fit=crop&q=80' },
+];
+
+let currentSlide = 0;
+const slides = document.querySelectorAll('.banner-slide');
+const dots = document.querySelectorAll('.dot');
+
+function goSlide(i) {
+  slides[currentSlide].classList.remove('active');
+  dots[currentSlide].classList.remove('active');
+  currentSlide = i;
+  slides[currentSlide].classList.add('active');
+  dots[currentSlide].classList.add('active');
+}
+
+setInterval(() => {
+  goSlide((currentSlide + 1) % slides.length);
+}, 2000);
+// Product images mapped by name — real matching images
+const PRODUCT_IMAGES = {
+  'Fresh Vegetables Basket':  'https://images.unsplash.com/photo-1542838132-92c53300491e?w=400&q=80',
+  'Amul Butter':              'https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&q=80',
+  'Aashirvaad Atta':          'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=400&q=80',
+  'Tata Salt':                'https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=400&q=80',
+  'Fortune Sunflower Oil':    'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?w=400&q=80',
+  'Amul Milk':                'https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400&q=80',
+  'Amul Paneer':              'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=400&q=80',
+  'Britannia Brown Bread':    'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80',
+  'Lays Classic Salted':      'https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80',
+  'Maggi 2 Minute Noodles':   'https://images.unsplash.com/photo-1612929633738-8fe44f7ec841?w=400&q=80',
+  'Coca Cola':                'https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&q=80',
+  'Bisleri Water':            'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?w=400&q=80',
+  'Chicken Breast':           'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&q=80',
+  'Rohu Fish':                'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=400&q=80',
+  'Dove Soap':                'https://images.unsplash.com/photo-1607006344380-b6775a0824a7?w=400&q=80',
+  'Colgate Toothpaste':       'https://images.unsplash.com/photo-1559590954-e79fc7b74f65?w=400&q=80',
+  'Surf Excel':               'https://images.unsplash.com/photo-1582735689369-4fe89db7114c?w=400&q=80',
+  'Harpic Toilet Cleaner':    'https://images.unsplash.com/photo-1585421514738-01798e348b17?w=400&q=80',
+  'Pampers Diapers':          'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&q=80',
+  'Pedigree Dog Food':        'https://images.unsplash.com/photo-1601758125946-6ec2ef64daf8?w=400&q=80',
+};
+
+let cart = JSON.parse(localStorage.getItem('zecoCart') || '[]');
+let allProducts = [];
+let currentPage = 1;
+let totalPages = 1;
+
+function saveCart() {
+  localStorage.setItem('zecoCart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+function updateCartCount() {
+  const total = cart.reduce((s, i) => s + i.quantity, 0);
+  document.getElementById('cartCount').textContent = total;
+}
+
+function getQty(id) {
+  return (cart.find(i => i.productId === id) || {}).quantity || 0;
+}
+
+function addToCart(p) {
+  if (!localStorage.getItem('token')) {
+    alert('Please login to add items to cart');
+    window.location.href = 'login.html';
+    return;
+  }
+  const ex = cart.find(i => i.productId === p._id);
+  if (ex) ex.quantity++;
+  else cart.push({ productId: p._id, name: p.name, image: PRODUCT_IMAGES[p.name] || p.image, price: p.price, quantity: 1 });
+  saveCart();
+  renderProducts(allProducts);
+}
+
+function changeQty(id, d) {
+  const item = cart.find(i => i.productId === id);
+  if (!item) return;
+  item.quantity += d;
+  if (item.quantity <= 0) cart = cart.filter(i => i.productId !== id);
+  saveCart();
+  renderProducts(allProducts);
+}
+
+function renderProducts(products) {
+  const grid = document.getElementById('productsGrid');
+  if (!products.length) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">🔍</div>
+      <h3>No products found</h3>
+      <p>Try a different search or category</p>
+    </div>`;
+    return;
+  }
+  grid.innerHTML = products.map(p => {
+    const qty = getQty(p._id);
+    const img = PRODUCT_IMAGES[p.name] || p.image;
+    const disc = p.mrp ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
+    return `
+    <div class="product-card">
+      ${disc > 0 ? `<div class="discount-tag">${disc}% OFF</div>` : ''}
+      <a href="product.html?id=${p._id}" style="text-decoration:none; color:inherit;">
+        <div class="product-img-wrap">
+          <img src="${img}" alt="${p.name}" loading="lazy"
+            onerror="this.src='https://images.unsplash.com/photo-1542838132-92c53300491e?w=400'"/>
+        </div>
+        <div class="p-brand">${p.brand || ''}</div>
+        <div class="p-name">${p.name}</div>
+        <div class="p-unit">${p.unit || ''}</div>
+      </a>
+
+      <div class="p-price-row">
+        <span class="p-price">₹${p.price}</span>
+        ${p.mrp ? `<span class="p-mrp">₹${p.mrp}</span>` : ''}
+      </div>
+      ${qty === 0
+        ? `<button class="add-btn" onclick='addToCart(${JSON.stringify(p).replace(/'/g,"&#39;")})'>+ Add</button>`
+        : `<div class="qty-control">
+            <button onclick="changeQty('${p._id}',-1)">−</button>
+            <span>${qty}</span>
+            <button onclick="changeQty('${p._id}',1)">+</button>
+           </div>`
+      }
+    </div>`;
+  }).join('');
+}
+
+function renderCategories() {
+  document.getElementById('categoriesScroll').innerHTML = CATEGORIES.map(c => `
+    <div class="cat-card" onclick="filterCat('${c.name}', this)">
+      <div class="cat-img-box"><img src="${c.img}" alt="${c.name}" loading="lazy"/></div>
+      <p>${c.name}</p>
+    </div>
+  `).join('');
+}
+
+async function filterCat(name, el) {
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('productsTitle').textContent = name;
+  document.getElementById('clearFilter').style.display = 'block';
+  const res = await api.getProducts(`?category=${encodeURIComponent(name)}&limit=50`);
+  allProducts = res.products;
+  renderProducts(allProducts);
+  const pagBox = document.getElementById('paginationBox');
+  if (pagBox) pagBox.innerHTML = '';
+  document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function loadAllProducts(page = 1) {
+  document.getElementById('productsTitle').textContent = 'All Products';
+  document.getElementById('clearFilter').style.display = 'none';
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+
+  document.getElementById('productsGrid').innerHTML = `<div class="loading-spinner" style="grid-column:1/-1"><div class="spinner"></div><p>Loading products...</p></div>`;
+
+  try {
+    const res = await api.getProducts(`?limit=12&page=${page}`);
+    allProducts = res.products;
+    currentPage = res.pagination.currentPage;
+    totalPages = res.pagination.totalPages;
+    renderProducts(allProducts);
+    renderPagination();
+  } catch (err) {
+    document.getElementById('productsGrid').innerHTML = `
+      <div class="error-state" style="grid-column:1/-1">
+        <div class="error-icon">⚠️</div>
+        <h3>Couldn't load products</h3>
+        <p>Check if the backend server is running, then try again</p>
+        <button class="retry-btn" onclick="loadAllProducts()">Retry</button>
+      </div>`;
+  }
+}
+
+function renderPagination() {
+  let pagBox = document.getElementById('paginationBox');
+  if (!pagBox) {
+    pagBox = document.createElement('div');
+    pagBox.id = 'paginationBox';
+    pagBox.style = 'display:flex; justify-content:center; gap:8px; margin-top:24px;';
+    document.getElementById('productsGrid').insertAdjacentElement('afterend', pagBox);
+  }
+
+  if (totalPages <= 1) { pagBox.innerHTML = ''; return; }
+
+  let buttons = '';
+  for (let i = 1; i <= totalPages; i++) {
+    buttons += `<button onclick="loadAllProducts(${i})" style="width:36px; height:36px; border-radius:8px; border:1.5px solid ${i === currentPage ? '#7b2ff7' : '#e5e7eb'}; background:${i === currentPage ? '#7b2ff7' : '#fff'}; color:${i === currentPage ? '#fff' : '#1a1a1a'}; font-weight:700; cursor:pointer;">${i}</button>`;
+  }
+
+  pagBox.innerHTML = `
+    <button onclick="loadAllProducts(${Math.max(1, currentPage - 1)})" ${currentPage === 1 ? 'disabled' : ''} style="padding:0 14px; height:36px; border-radius:8px; border:1.5px solid #e5e7eb; background:#fff; font-weight:600; cursor:pointer; opacity:${currentPage === 1 ? '0.4' : '1'};">‹ Prev</button>
+    ${buttons}
+    <button onclick="loadAllProducts(${Math.min(totalPages, currentPage + 1)})" ${currentPage === totalPages ? 'disabled' : ''} style="padding:0 14px; height:36px; border-radius:8px; border:1.5px solid #e5e7eb; background:#fff; font-weight:600; cursor:pointer; opacity:${currentPage === totalPages ? '0.4' : '1'};">Next ›</button>
+  `;
+}
+
+function handleAuthBtn() {
+  if (localStorage.getItem('token')) {
+    if (confirm('Logout from ZECO?')) {
+      localStorage.clear();
+      cart = [];
+      location.reload();
+    }
+  } else {
+    window.location.href = 'login.html';
+  }
+}
+
+function toggleAccountMenu() {
+  if (!localStorage.getItem('token')) {
+    window.location.href = 'login.html';
+    return;
+  }
+  document.getElementById('accountDropdown').classList.toggle('open');
+}
+
+document.addEventListener('click', (e) => {
+  const wrap = document.querySelector('.account-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    document.getElementById('accountDropdown')?.classList.remove('open');
+  }
+});
+
+function scrollToProducts() {
+  document.getElementById('productsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+// Search
+let searchTimer;
+document.getElementById('searchInput').addEventListener('input', e => {
+  clearTimeout(searchTimer);
+  const q = e.target.value.trim();
+  searchTimer = setTimeout(async () => {
+    if (!q) { loadAllProducts(); return; }
+    document.getElementById('productsTitle').textContent = `Results for "${q}"`;
+    const res = await api.getProducts(`?search=${encodeURIComponent(q)}`);
+    allProducts = res.products;
+    renderProducts(allProducts);
+    const pagBox = document.getElementById('paginationBox');
+    if (pagBox) pagBox.innerHTML = '';
+  }, 300);
+});
+
+function openLocationModal() {
+  document.getElementById('locationModalRoot').innerHTML = `
+    <div class="location-modal-overlay" onclick="if(event.target===this) closeLocationModal()">
+      <div class="location-modal">
+        <h3>📍 Select delivery location</h3>
+        <p>Enter your pincode to check if we deliver to your area</p>
+        <input type="text" id="pincodeInput" placeholder="Enter 6-digit pincode" maxlength="6"/>
+        <button class="purple-btn" style="width:100%" onclick="checkPincodeNow()">Check</button>
+        <div id="pincodeResult"></div>
+        <button class="location-modal-close" onclick="closeLocationModal()">Close</button>
+      </div>
+    </div>
+  `;
+}
+
+function closeLocationModal() {
+  document.getElementById('locationModalRoot').innerHTML = '';
+}
+
+async function checkPincodeNow() {
+  const pincode = document.getElementById('pincodeInput').value.trim();
+  const resultBox = document.getElementById('pincodeResult');
+
+  if (!/^\d{6}$/.test(pincode)) {
+    resultBox.innerHTML = '<div class="location-result no">Please enter a valid 6-digit pincode</div>';
+    return;
+  }
+
+  const res = await api.checkPincode(pincode);
+  resultBox.innerHTML = `<div class="location-result ${res.serviceable ? 'ok' : 'no'}">${res.serviceable ? '✅' : '❌'} ${res.message}</div>`;
+
+  if (res.serviceable) {
+    localStorage.setItem('zecoPincode', pincode);
+    document.getElementById('locationLabel').textContent = `📍 ${pincode}`;
+    setTimeout(closeLocationModal, 1200);
+  }
+}
+
+function loadSavedLocation() {
+  const saved = localStorage.getItem('zecoPincode');
+  if (saved) document.getElementById('locationLabel').textContent = `📍 ${saved}`;
+}
+
+// Init
+const token = localStorage.getItem('token');
+const name  = localStorage.getItem('userName');
+if (token) {
+  document.getElementById('authLabel').textContent = name || 'Account';
+  if (localStorage.getItem('userRole') === 'admin') {
+    document.getElementById('adminLink').style.display = 'block';
+  }
+}
+updateCartCount();
+renderCategories();
+loadAllProducts();
+loadSavedLocation();
+</script>
+</body>
+</html>

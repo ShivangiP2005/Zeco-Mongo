@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Dashboard — ZECO</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="logo">zeco</a>
+  <span style="font-size:13px; font-weight:700; color:#7b2ff7; background:#f3ebff; padding:5px 12px; border-radius:20px;">ADMIN</span>
+  <div style="flex:1"></div>
+  <div class="nav-actions">
+    <button class="btn-login" onclick="localStorage.clear(); window.location.href='login.html'">Logout</button>
+  </div>
+</nav>
+
+<div class="admin-wrap" id="adminContent">
+  <p style="text-align:center; padding:40px; color:#888;">Loading dashboard...</p>
+</div>
+
+<script src="js/api.js"></script>
+<script>
+const role = localStorage.getItem('userRole');
+const wrap = document.getElementById('adminContent');
+
+if (role !== 'admin') {
+  wrap.innerHTML = `
+    <div class="empty-state">
+      <div class="empty-icon">🔒</div>
+      <h3>Access Denied</h3>
+      <p>This page is for admins only</p>
+      <button class="purple-btn" onclick="window.location.href='index.html'">Go Home</button>
+    </div>`;
+} else {
+  loadDashboard();
+}
+
+let activeTab = 'orders';
+
+async function loadDashboard() {
+  const [stats, orders, users, analytics] = await Promise.all([
+    api.getStats(),
+    api.getAdminOrders(),
+    api.getAdminUsers(),
+    api.getAnalytics()
+  ]);
+
+  window.__orders = orders;
+  window.__users = users;
+  window.__analytics = analytics;
+
+  wrap.innerHTML = `
+    <div class="stats-row">
+      <div class="stat-box">
+        <div class="stat-icon">📦</div>
+        <h3>${stats.totalOrders}</h3>
+        <p>Total Orders</p>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">👥</div>
+        <h3>${stats.totalUsers}</h3>
+        <p>Total Users</p>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">🛒</div>
+        <h3>${stats.totalProducts}</h3>
+        <p>Total Products</p>
+      </div>
+      <div class="stat-box">
+        <div class="stat-icon">💰</div>
+        <h3>₹${stats.totalRevenue}</h3>
+        <p>Total Revenue</p>
+      </div>
+    </div>
+
+    <div style="background:white; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:24px;">
+      <h3 style="font-size:16px; font-weight:800; margin-bottom:16px;">Revenue — last 7 days</h3>
+      <div id="revenueChart" style="display:flex; align-items:flex-end; gap:10px; height:140px; padding:0 4px;"></div>
+    </div>
+
+    <div style="background:white; border:1px solid #e5e7eb; border-radius:12px; padding:20px; margin-bottom:24px;">
+      <h3 style="font-size:16px; font-weight:800; margin-bottom:14px;">Top 5 products</h3>
+      <div id="topProductsList"></div>
+    </div>
+
+    <div class="admin-tabs">
+      <button class="tab-btn ${activeTab === 'orders' ? 'active' : ''}" onclick="switchTab('orders')">Orders</button>
+      <button class="tab-btn ${activeTab === 'users' ? 'active' : ''}" onclick="switchTab('users')">Users</button>
+    </div>
+
+    <div id="tabContent"></div>
+  `;
+
+  renderTab();
+  renderAnalytics();
+  
+}
+
+function switchTab(tab) {
+  activeTab = tab;
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  renderTab();
+}
+
+function renderTab() {
+  const content = document.getElementById('tabContent');
+
+  if (activeTab === 'orders') {
+    content.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr><th>Order ID</th><th>Customer</th><th>Items</th><th>Total</th><th>Status</th></tr>
+        </thead>
+        <tbody>
+          ${window.__orders.map(o => `
+            <tr>
+              <td>#${o._id.slice(-8).toUpperCase()}</td>
+              <td>${o.user?.name || 'Unknown'}<br/><span style="font-size:12px;color:#999">${o.user?.email || ''}</span></td>
+              <td>${o.items.length} item${o.items.length > 1 ? 's' : ''}</td>
+              <td>₹${o.totalPrice}</td>
+              <td>
+                <select class="status-select" onchange="updateStatus('${o._id}', this.value)" ${o.status === 'Cancelled' ? 'disabled' : ''}>
+                  ${['Order Placed','Confirmed','Packed','Out for Delivery','Delivered','Cancelled'].map(s =>
+                    `<option value="${s}" ${o.status === s ? 'selected' : ''}>${s}</option>`
+                  ).join('')}
+                </select>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  } else {
+    content.innerHTML = `
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th><th>Joined</th></tr>
+        </thead>
+        <tbody>
+          ${window.__users.map(u => `
+            <tr>
+              <td>${u.name}</td>
+              <td>${u.email}</td>
+              <td>${u.phone || '—'}</td>
+              <td>${u.role}</td>
+              <td>${new Date(u.createdAt).toLocaleDateString('en-IN')}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+}
+
+async function updateStatus(orderId, newStatus) {
+  await api.updateOrderStatus(orderId, newStatus);
+  const order = window.__orders.find(o => o._id === orderId);
+  if (order) order.status = newStatus;
+}
+</script>
+</body>
+</html>
