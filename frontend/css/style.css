@@ -535,3 +535,78 @@ footer p { font-size: 13px; color: var(--text-muted); }
   border-radius: 8px; font-weight: 700; font-size: 14px;
   border: none; margin-top: 16px; cursor: pointer;
 }
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  /* Navbar */
+  .navbar {
+    padding: 0 12px; height: auto;
+    flex-wrap: wrap; gap: 8px; padding: 10px 12px;
+  }
+  .delivery-info { display: none; }
+  .search-wrap { order: 3; width: 100%; flex: unset; }
+  .nav-actions { margin-left: auto; }
+  .btn-login span { display: none; }
+  .btn-login { padding: 8px 12px; }
+  .btn-cart { padding: 8px 12px; }
+
+  /* Banner */
+  .banner-section { padding: 10px 12px; }
+  .banner-slider { height: 160px; }
+  .banner-slide { padding: 20px 16px; }
+  .banner-content h2 { font-size: 20px; }
+  .banner-content p { font-size: 12px; margin-bottom: 10px; }
+  .banner-btn { padding: 8px 14px; font-size: 13px; }
+  .banner-products { width: 40%; }
+  .banner-products img { max-height: 120px; }
+
+  /* Offers strip */
+  .offer-card { min-width: 200px; padding: 12px 14px; }
+  .offer-icon { font-size: 28px; }
+
+  /* Categories */
+  .section { padding: 8px 12px 12px; }
+  .cat-card { width: 80px; }
+  .cat-card .cat-img-box { width: 70px; height: 70px; }
+
+  /* Products grid */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .product-img-wrap { height: 110px; }
+  .p-name { font-size: 13px; }
+  .p-price { font-size: 14px; }
+
+  /* Cart */
+  .cart-layout {
+    grid-template-columns: 1fr;
+  }
+  .order-summary { position: static; }
+  .cart-item img { width: 56px; height: 56px; }
+
+  /* Auth */
+  .auth-card { padding: 24px 20px; }
+
+  /* Orders */
+  .orders-container { padding: 0 12px; }
+  .status-timeline { overflow-x: auto; }
+  .timeline-label { font-size: 9px; }
+
+  /* Admin */
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .admin-wrap { padding: 0 12px; }
+  .data-table { font-size: 12px; }
+  .data-table th, .data-table td { padding: 8px 10px; }
+
+  /* Page wrap */
+  .page-wrap { padding: 0 12px; margin: 16px auto; }
+}
+
+@media (max-width: 480px) {
+  .products-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .banner-slider { height: 140px; }
+  .banner-content h2 { font-size: 17px; }
+  .banner-products { display: none; }
+  .section-header h2 { font-size: 15px; }
+}
