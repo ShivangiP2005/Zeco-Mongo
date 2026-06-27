@@ -196,7 +196,7 @@ Open `frontend/index.html` with Live Server in VS Code, or serve the `frontend/`
 ## Author
 
 **Shivangi Pandey**  
-[GitHub](https://github.com/ShivangiP2005) · [LinkedIn](https://linkedin.com/in/shivangi-pandey)
+[GitHub](https://github.com/ShivangiP2005) · [LinkedIn](https://www.linkedin.com/in/shivangi-pandey-976aa9285/)
 
 ---
 
