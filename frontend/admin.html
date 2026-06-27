@@ -96,7 +96,48 @@ async function loadDashboard() {
 
   renderTab();
   renderAnalytics();
-  
+
+}
+
+function renderAnalytics() {
+  const { revenueByDay, topProducts } = window.__analytics;
+
+  const chartBox = document.getElementById('revenueChart');
+  if (!revenueByDay.length) {
+    chartBox.innerHTML = '<p style="font-size:13px; color:#999; margin:auto;">No orders in the last 7 days yet</p>';
+  } else {
+    const maxRevenue = Math.max(...revenueByDay.map(d => d.revenue), 1);
+    chartBox.innerHTML = revenueByDay.map(d => {
+      const heightPct = Math.max(6, Math.round((d.revenue / maxRevenue) * 100));
+      const dateLabel = new Date(d._id).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' });
+      return `
+        <div style="flex:1; display:flex; flex-direction:column; align-items:center; height:100%; justify-content:flex-end;">
+          <span style="font-size:11px; font-weight:700; color:#7b2ff7; margin-bottom:4px;">₹${d.revenue}</span>
+          <div style="width:100%; max-width:40px; background:#7b2ff7; border-radius:6px 6px 0 0; height:${heightPct}%; transition:height 0.3s;"></div>
+          <span style="font-size:11px; color:#888; margin-top:6px;">${dateLabel}</span>
+        </div>`;
+    }).join('');
+  }
+
+  const topBox = document.getElementById('topProductsList');
+  if (!topProducts.length) {
+    topBox.innerHTML = '<p style="font-size:13px; color:#999;">No sales data yet</p>';
+  } else {
+    const maxQty = Math.max(...topProducts.map(p => p.totalQuantity), 1);
+    topBox.innerHTML = topProducts.map((p, i) => {
+      const widthPct = Math.round((p.totalQuantity / maxQty) * 100);
+      return `
+        <div style="margin-bottom:12px;">
+          <div style="display:flex; justify-content:space-between; font-size:13px; margin-bottom:4px;">
+            <span style="font-weight:700;">${i + 1}. ${p._id}</span>
+            <span style="color:#666;">${p.totalQuantity} sold · ₹${p.totalRevenue}</span>
+          </div>
+          <div style="background:#f2f2f2; border-radius:6px; height:8px; overflow:hidden;">
+            <div style="background:#0c831f; height:100%; width:${widthPct}%; border-radius:6px;"></div>
+          </div>
+        </div>`;
+    }).join('');
+  }
 }
 
 function switchTab(tab) {
